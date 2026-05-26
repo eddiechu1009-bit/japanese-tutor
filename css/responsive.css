@@ -1,0 +1,218 @@
+/* ======= UX Pro Max: Touch & Interaction ======= */
+@media (pointer: coarse) {
+    .btn, .nav__link, .quick-action, .scenario-card, .jlpt-level-card, .rating-btn {
+        min-height: 44px;
+    }
+
+    .flashcard-scene {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .chat-bubble--hidden {
+        border: 2px dashed var(--accent-dim);
+    }
+}
+
+/* ======= Tablet ======= */
+@media (max-width: 768px) {
+    :root {
+        --nav-width: 0px;
+    }
+
+    .nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: auto;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        padding: var(--space-2) 0;
+        padding-bottom: env(safe-area-inset-bottom, var(--space-2));
+        border-right: none;
+        border-top: 1px solid var(--border);
+        z-index: 1000;
+        backdrop-filter: blur(12px);
+        background: rgba(22, 27, 34, 0.92);
+    }
+
+    .nav__brand {
+        display: none;
+    }
+
+    .nav__links {
+        flex-direction: row;
+        justify-content: space-around;
+        width: 100%;
+        padding: 0;
+        gap: 0;
+    }
+
+    .nav__link {
+        flex-direction: column;
+        gap: 2px;
+        padding: var(--space-2) var(--space-1);
+        font-size: 10px;
+        min-width: 48px;
+        align-items: center;
+    }
+
+    .nav__icon {
+        width: 22px;
+        height: 22px;
+    }
+
+    .main {
+        margin-left: 0;
+        width: 100%;
+        padding: var(--space-4);
+        padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .today-card__stats {
+        flex-wrap: wrap;
+        gap: var(--space-4);
+    }
+
+    .progress-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .flashcard__word {
+        font-size: 2.5rem;
+    }
+
+    .flashcard-rating {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dialogue-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chat-bubble {
+        max-width: 90%;
+    }
+
+    .view__title {
+        font-size: var(--text-xl);
+    }
+
+    .heatmap__grid {
+        grid-template-columns: repeat(12, 1fr);
+    }
+}
+
+/* ======= Phone ======= */
+@media (max-width: 480px) {
+    .main {
+        padding: var(--space-3);
+        padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .today-card {
+        padding: var(--space-5);
+    }
+
+    .today-card__title {
+        font-size: var(--text-lg);
+    }
+
+    .flashcard {
+        min-height: 240px;
+    }
+
+    .flashcard__word {
+        font-size: 2rem;
+    }
+
+    .flashcard__reading {
+        font-size: var(--text-base);
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat-card {
+        padding: var(--space-3);
+    }
+
+    .stat-card__value {
+        font-size: var(--text-2xl);
+    }
+
+    .quick-actions {
+        flex-direction: column;
+    }
+
+    .quick-action {
+        min-width: 0;
+    }
+
+    .session-complete__stats {
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+
+    .week-days {
+        gap: var(--space-1);
+    }
+
+    .week-day {
+        padding: var(--space-2);
+    }
+
+    .card {
+        padding: var(--space-4);
+    }
+
+    .btn--large {
+        padding: var(--space-4) var(--space-6);
+        width: 100%;
+    }
+
+    .proverb-card {
+        padding: var(--space-5);
+    }
+
+    .proverb-card__jp {
+        font-size: var(--text-lg);
+    }
+
+    .jlpt-level-card {
+        flex-wrap: wrap;
+    }
+
+    .rating-btn {
+        padding: var(--space-3);
+    }
+}
+
+/* ======= Landscape phone (flashcard optimized) ======= */
+@media (max-height: 500px) and (orientation: landscape) {
+    .flashcard {
+        min-height: 180px;
+    }
+
+    .flashcard__word {
+        font-size: 1.8rem;
+    }
+
+    .flashcard-rating {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .nav {
+        display: none;
+    }
+
+    .main {
+        padding-bottom: var(--space-4);
+    }
+}

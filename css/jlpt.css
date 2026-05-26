@@ -1,0 +1,121 @@
+/* ======= JLPT Section ======= */
+.jlpt-levels {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.jlpt-level-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    padding: var(--space-5) var(--space-6);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.jlpt-level-card:hover {
+    border-color: var(--accent-dim);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.jlpt-level-card:active {
+    transform: translateY(0);
+}
+
+.jlpt-level-card__badge {
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    color: var(--accent-light);
+    background: var(--accent-glow);
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-md);
+    min-width: 64px;
+    text-align: center;
+}
+
+.jlpt-level-card__info {
+    flex: 1;
+}
+
+.jlpt-level-card__title {
+    font-weight: 600;
+    margin-bottom: var(--space-1);
+}
+
+.jlpt-level-card__meta {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+.jlpt-level-card__score {
+    flex-shrink: 0;
+}
+
+/* JLPT Tips */
+.jlpt-tips {
+    margin-top: var(--space-6);
+}
+
+.jlpt-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--bg-tertiary);
+}
+
+.jlpt-tip__icon {
+    font-size: var(--text-lg);
+    flex-shrink: 0;
+}
+
+.jlpt-tip__text {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Exam Passage */
+.exam-passage {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    margin-bottom: var(--space-5);
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.exam-passage__text {
+    font-size: var(--text-sm);
+    line-height: 2;
+    color: var(--text-primary);
+}
+
+.exam-question__type {
+    margin-bottom: var(--space-2);
+}
+
+/* Mobile JLPT */
+@media (max-width: 768px) {
+    .jlpt-level-card {
+        padding: var(--space-4);
+        gap: var(--space-3);
+    }
+
+    .jlpt-level-card__badge {
+        font-size: var(--text-lg);
+        padding: var(--space-2) var(--space-3);
+        min-width: 48px;
+    }
+
+    .exam-passage {
+        max-height: 200px;
+    }
+}

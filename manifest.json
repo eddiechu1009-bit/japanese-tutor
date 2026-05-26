@@ -1,0 +1,22 @@
+{
+    "name": "日語家教 — 商務日語學習系統",
+    "short_name": "日語家教",
+    "description": "12週商務日語學習計畫，含 SRS 記憶卡片、對話練習、JLPT 模擬考",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#0D1117",
+    "theme_color": "#0D1117",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "assets/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

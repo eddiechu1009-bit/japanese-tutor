@@ -1,0 +1,197 @@
+/* ======= Progress View ======= */
+.progress-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+}
+
+.progress-grid--full {
+    grid-column: 1 / -1;
+}
+
+/* Heatmap Calendar */
+.heatmap {
+    grid-column: 1 / -1;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+}
+
+.heatmap__title {
+    font-size: var(--text-base);
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+}
+
+.heatmap__grid {
+    display: grid;
+    grid-template-columns: repeat(52, 1fr);
+    gap: 3px;
+}
+
+.heatmap__cell {
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: var(--bg-tertiary);
+    min-width: 10px;
+}
+
+.heatmap__cell--l1 { background: rgba(124, 111, 212, 0.25); }
+.heatmap__cell--l2 { background: rgba(124, 111, 212, 0.5); }
+.heatmap__cell--l3 { background: rgba(124, 111, 212, 0.75); }
+.heatmap__cell--l4 { background: var(--accent-primary); }
+
+.heatmap__months {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}
+
+/* Level Progress */
+.level-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+}
+
+.level-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+}
+
+.level-card__title {
+    font-weight: 600;
+}
+
+.level-card__percent {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--accent-light);
+}
+
+.level-card__bar {
+    height: 12px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--space-3);
+}
+
+.level-card__fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    background: linear-gradient(90deg, var(--accent-dim), var(--accent-light), var(--sakura));
+    transition: width var(--transition-slow);
+}
+
+.level-card__labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}
+
+/* Mastery Chart */
+.mastery-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+}
+
+.mastery-card__title {
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+}
+
+.mastery-chart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-6);
+}
+
+.mastery-ring {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.mastery-ring svg {
+    transform: rotate(-90deg);
+}
+
+.mastery-ring circle {
+    fill: none;
+    stroke-width: 12;
+}
+
+.mastery-legend {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.mastery-legend__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+}
+
+.mastery-legend__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+/* Weekly Bar Chart */
+.weekly-chart {
+    grid-column: 1 / -1;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+}
+
+.weekly-chart__title {
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+}
+
+.weekly-chart__bars {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-2);
+    height: 150px;
+    padding-top: var(--space-4);
+}
+
+.weekly-chart__bar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    height: 100%;
+    justify-content: flex-end;
+}
+
+.weekly-chart__fill {
+    width: 100%;
+    max-width: 30px;
+    background: linear-gradient(180deg, var(--accent-light), var(--accent-dim));
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    transition: height var(--transition-slow);
+}
+
+.weekly-chart__label {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}

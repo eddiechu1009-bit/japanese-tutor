@@ -1,0 +1,136 @@
+export const scenarios = [
+    {
+        id: 'dlg-01',
+        title_zh: '初次見面自我介紹',
+        title_jp: '初対面の自己紹介',
+        scene_zh: '你剛加入新公司，在部門會議上自我介紹',
+        icon: '🤝',
+        difficulty: 1,
+        week: 1,
+        lines: [
+            { speaker: '司会', text: 'では、新しいメンバーに自己紹介をお願いしましょう。', zh: '那麼，請新成員自我介紹一下。', role: 'other' },
+            { speaker: 'あなた', text: '初めまして。本日付で配属になりました○○と申します。', zh: '初次見面。我是今天起加入的○○。', role: 'user', hidden: true },
+            { speaker: 'あなた', text: '前職ではプロジェクト管理を担当しておりました。', zh: '前一份工作負責專案管理。', role: 'user', hidden: true },
+            { speaker: 'あなた', text: '一日も早く戦力になれるよう頑張ります。よろしくお願いいたします。', zh: '我會努力盡早成為即戰力。請多指教。', role: 'user', hidden: true },
+            { speaker: '部長', text: 'ようこそ。何かわからないことがあれば遠慮なく聞いてくださいね。', zh: '歡迎。有任何不懂的事，不用客氣儘管問。', role: 'other' },
+        ],
+        keyExpressions: [
+            { jp: '〜と申します', zh: '我叫...（謙讓）' },
+            { jp: '〜に配属になりました', zh: '被分配到...' },
+            { jp: 'よろしくお願いいたします', zh: '請多指教' },
+        ]
+    },
+    {
+        id: 'dlg-02',
+        title_zh: '拜訪客戶公司',
+        title_jp: '取引先への訪問',
+        scene_zh: '你去拜訪合作公司，在櫃台報到',
+        icon: '🏢',
+        difficulty: 1,
+        week: 1,
+        lines: [
+            { speaker: '受付', text: 'いらっしゃいませ。ご用件をお伺いします。', zh: '歡迎光臨。請問有什麼事？', role: 'other' },
+            { speaker: 'あなた', text: '○○会社の田中と申します。14時に営業部の山田様とお約束がございます。', zh: '我是○○公司的田中。和業務部的山田先生約了2點。', role: 'user', hidden: true },
+            { speaker: '受付', text: 'かしこまりました。少々お待ちくださいませ。', zh: '了解了。請稍候。', role: 'other' },
+            { speaker: '山田', text: 'お待たせしました。わざわざお越しいただきありがとうございます。', zh: '讓您久等了。感謝您特地前來。', role: 'other' },
+            { speaker: 'あなた', text: 'こちらこそ、お忙しいところお時間をいただきありがとうございます。', zh: '哪裡，百忙之中撥空見我，非常感謝。', role: 'user', hidden: true },
+        ],
+        keyExpressions: [
+            { jp: 'お約束がございます', zh: '有約（敬語）' },
+            { jp: 'お越しいただき', zh: '承蒙您前來' },
+            { jp: 'お時間をいただき', zh: '佔用您的時間' },
+        ]
+    },
+    {
+        id: 'dlg-03',
+        title_zh: '接聽電話並轉接',
+        title_jp: '電話を受けて取り次ぐ',
+        scene_zh: '外部來電找你的同事，但同事正在開會',
+        icon: '📞',
+        difficulty: 2,
+        week: 3,
+        lines: [
+            { speaker: 'あなた', text: 'はい、○○会社営業部でございます。', zh: '您好，這裡是○○公司業務部。', role: 'user', hidden: true },
+            { speaker: '相手', text: '△△商事の木村と申します。佐藤様はいらっしゃいますか。', zh: '我是△△商事的木村。請問佐藤先生在嗎？', role: 'other' },
+            { speaker: 'あなた', text: 'いつもお世話になっております。あいにく佐藤はただいま打ち合わせ中でございます。', zh: '一直承蒙關照。很遺憾，佐藤目前正在開會。', role: 'user', hidden: true },
+            { speaker: '相手', text: 'そうですか。何時ごろお戻りになりますか。', zh: '這樣啊。大約幾點回來呢？', role: 'other' },
+            { speaker: 'あなた', text: '15時には戻る予定でございます。折り返しお電話いたしましょうか。', zh: '預計3點回來。需要他回電給您嗎？', role: 'user', hidden: true },
+            { speaker: '相手', text: 'はい、お願いします。番号は03-xxxx-xxxxです。', zh: '好的，麻煩了。號碼是03-xxxx-xxxx。', role: 'other' },
+            { speaker: 'あなた', text: '復唱いたします。03-xxxx-xxxxですね。佐藤に申し伝えます。', zh: '我複述一下。是03-xxxx-xxxx對嗎？我會轉達佐藤。', role: 'user', hidden: true },
+        ],
+        keyExpressions: [
+            { jp: 'あいにく〜ております', zh: '很遺憾...正在...' },
+            { jp: '折り返しお電話いたしましょうか', zh: '需要回電嗎？' },
+            { jp: '復唱いたします', zh: '我複述一下' },
+            { jp: '申し伝えます', zh: '我會轉達' },
+        ]
+    },
+    {
+        id: 'dlg-04',
+        title_zh: '寫信催促回覆',
+        title_jp: 'リマインドメールを書く',
+        scene_zh: '之前寄了報價單，對方還沒回覆，需要禮貌催促',
+        icon: '✉️',
+        difficulty: 2,
+        week: 4,
+        lines: [
+            { speaker: '件名', text: '【ご確認】お見積もりの件', zh: '【請確認】關於報價的事', role: 'other' },
+            { speaker: 'あなた', text: 'いつもお世話になっております。○○会社の田中でございます。', zh: '一直承蒙關照。我是○○公司的田中。', role: 'user', hidden: true },
+            { speaker: 'あなた', text: '先日お送りいたしましたお見積もりの件でご連絡いたしました。', zh: '關於前幾天寄送的報價單一事聯繫您。', role: 'user', hidden: true },
+            { speaker: 'あなた', text: 'ご多忙のところ恐れ入りますが、ご検討状況をお聞かせいただけますと幸いです。', zh: '百忙之中不好意思，如能告知考慮狀況就太好了。', role: 'user', hidden: true },
+            { speaker: 'あなた', text: 'ご不明点がございましたら、何なりとお申し付けください。', zh: '如有不清楚的地方，請不吝告知。', role: 'user', hidden: true },
+            { speaker: 'あなた', text: 'お忙しい中恐縮ですが、何卒よろしくお願い申し上げます。', zh: '百忙之中打擾了，懇請多多關照。', role: 'user', hidden: true },
+        ],
+        keyExpressions: [
+            { jp: '〜の件でご連絡いたしました', zh: '關於...一事聯繫您' },
+            { jp: 'ご検討状況をお聞かせいただけますと幸いです', zh: '如能告知考慮狀況就太好了' },
+            { jp: '何なりとお申し付けください', zh: '請不吝告知' },
+        ]
+    },
+    {
+        id: 'dlg-05',
+        title_zh: '會議中提出意見',
+        title_jp: '会議で意見を述べる',
+        scene_zh: '在團隊會議中，你需要對新提案表達意見',
+        icon: '💼',
+        difficulty: 2,
+        week: 5,
+        lines: [
+            { speaker: '司会', text: 'この提案について、何かご意見はありますか。', zh: '關於這個提案，有什麼意見嗎？', role: 'other' },
+            { speaker: 'あなた', text: 'すみません、一点よろしいでしょうか。', zh: '不好意思，能提一點嗎？', role: 'user', hidden: true },
+            { speaker: '司会', text: 'はい、どうぞ。', zh: '好的，請說。', role: 'other' },
+            { speaker: 'あなた', text: 'スケジュールに関しまして、少し懸念がございます。', zh: '關於時程，我有一些擔心。', role: 'user', hidden: true },
+            { speaker: 'あなた', text: '現在のリソースでは、期日に間に合わない可能性があると思われます。', zh: '以目前的人力，可能趕不上截止日。', role: 'user', hidden: true },
+            { speaker: 'あなた', text: '段階的に進める方法はいかがでしょうか。', zh: '分階段進行如何呢？', role: 'user', hidden: true },
+            { speaker: '部長', text: 'なるほど、具体的にはどのように分けますか。', zh: '原來如此，具體怎麼分呢？', role: 'other' },
+        ],
+        keyExpressions: [
+            { jp: '一点よろしいでしょうか', zh: '能提一點嗎？' },
+            { jp: '〜に関しまして', zh: '關於...' },
+            { jp: '〜と思われます', zh: '(被動式表達)我認為...' },
+            { jp: '〜はいかがでしょうか', zh: '...如何呢？' },
+        ]
+    },
+    {
+        id: 'dlg-06',
+        title_zh: '委婉拒絕請求',
+        title_jp: '依頼を丁寧に断る',
+        scene_zh: '客戶要求不合理的交期，你需要委婉拒絕並提出替代方案',
+        icon: '🙏',
+        difficulty: 3,
+        week: 6,
+        lines: [
+            { speaker: '客先', text: '来週の月曜日までに納品していただけませんか。', zh: '能在下週一前交貨嗎？', role: 'other' },
+            { speaker: 'あなた', text: 'ご依頼ありがとうございます。ご期待に沿いたいところですが...', zh: '感謝您的委託。雖然很想滿足您的期待...', role: 'user', hidden: true },
+            { speaker: 'あなた', text: '申し訳ございませんが、現状では来週月曜日の納品は難しい状況でございます。', zh: '非常抱歉，目前情況下下週一交貨有困難。', role: 'user', hidden: true },
+            { speaker: 'あなた', text: '来週水曜日でしたら対応可能でございます。ご検討いただけないでしょうか。', zh: '如果是下週三的話可以對應。能否請您考慮？', role: 'user', hidden: true },
+            { speaker: '客先', text: '水曜日ですか...わかりました。それでお願いします。', zh: '週三啊...好吧。那就麻煩了。', role: 'other' },
+            { speaker: 'あなた', text: 'ご理解いただきありがとうございます。品質を確保した上で、確実にお届けいたします。', zh: '感謝您的理解。我們會確保品質，準時交付。', role: 'user', hidden: true },
+        ],
+        keyExpressions: [
+            { jp: 'ご期待に沿いたいところですが', zh: '雖然很想滿足期待...' },
+            { jp: '難しい状況でございます', zh: '目前有困難' },
+            { jp: 'ご検討いただけないでしょうか', zh: '能否請您考慮？' },
+        ]
+    },
+];

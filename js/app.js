@@ -1,0 +1,82 @@
+import { renderDashboard } from './dashboard.js';
+import { renderFlashcard, flipCard, rateCard, resetSession, speakWord, speakWordSlow, speakExample } from './flashcard.js';
+import { renderDialogue, openDialogue, closeDialogue, revealLine, completeDialogue, switchDialogueTab } from './dialogue.js';
+import { renderProgress } from './progress.js';
+import { renderReview, startReview, answerQuiz, nextQuestion, resetQuiz } from './review.js';
+import { renderJLPT, selectJLPTLevel, backToJLPTOverview, backToJLPTLevel, startJLPTExam, answerJLPT, nextJLPTQuestion } from './jlpt.js';
+import { speak, speakSlow, startListening, stopListening } from './speech.js';
+
+const routes = {
+    '': renderDashboard,
+    '#dashboard': renderDashboard,
+    '#flashcard': renderFlashcard,
+    '#dialogue': renderDialogue,
+    '#progress': renderProgress,
+    '#review': renderReview,
+    '#jlpt': renderJLPT,
+};
+
+function navigate() {
+    const hash = location.hash || '';
+    const renderer = routes[hash] || renderDashboard;
+    const main = document.getElementById('main-content');
+    if (main) {
+        main.innerHTML = renderer();
+    }
+    updateActiveNav(hash || '#dashboard');
+}
+
+function updateActiveNav(hash) {
+    document.querySelectorAll('.nav__link').forEach(link => {
+        const href = link.getAttribute('href');
+        link.classList.toggle('active', href === hash);
+    });
+}
+
+window.addEventListener('hashchange', navigate);
+
+window.addEventListener('DOMContentLoaded', () => {
+    navigate();
+});
+
+window.JT = {
+    flipCard,
+    rateCard,
+    resetSession,
+    speakWord,
+    speakWordSlow,
+    speakExample,
+    speak,
+    speakSlow,
+    startListening,
+    stopListening,
+    openDialogue,
+    closeDialogue,
+    revealLine,
+    completeDialogue,
+    switchDialogueTab,
+    startReview,
+    answerQuiz,
+    nextQuestion,
+    resetQuiz,
+    selectJLPTLevel,
+    backToJLPTOverview,
+    backToJLPTLevel,
+    startJLPTExam,
+    answerJLPT,
+    nextJLPTQuestion,
+};
+
+window.addEventListener('keydown', (e) => {
+    const hash = location.hash;
+    if (hash === '#flashcard') {
+        if (e.code === 'Space' || e.code === 'Enter') {
+            e.preventDefault();
+            flipCard();
+        }
+        if (e.key === '1') rateCard(1);
+        if (e.key === '2') rateCard(2);
+        if (e.key === '3') rateCard(3);
+        if (e.key === '4') rateCard(4);
+    }
+});
