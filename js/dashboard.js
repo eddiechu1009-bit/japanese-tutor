@@ -116,6 +116,14 @@ export function renderDashboard() {
                 ` : ''}
             </div>
 
+            <div class="ai-quick-start card" onclick="location.hash='#ai-chat'; setTimeout(()=>window.JT.quickStart(), 100)">
+                <div class="ai-quick-start__icon">⚡</div>
+                <div class="ai-quick-start__body">
+                    <div class="ai-quick-start__title">5 分鐘快練</div>
+                    <div class="ai-quick-start__desc">隨機主題，AI 對話直接開始</div>
+                </div>
+            </div>
+
             <div class="card streak-card">
                 <div class="streak-card__flame">${user.streakDays > 0 ? '🔥' : '💤'}</div>
                 <div class="streak-card__count">${user.streakDays}</div>

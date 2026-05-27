@@ -188,6 +188,12 @@ function renderMessages() {
     }).join('');
 }
 
+export function quickStart() {
+    const topics = TOPICS.filter(t => t.id !== 'free');
+    const random = topics[Math.floor(Math.random() * topics.length)];
+    selectAITopic(random.id);
+}
+
 function renderTopicSelect() {
     return `
     <div class="view">
@@ -195,6 +201,15 @@ function renderTopicSelect() {
             <div class="view__title">AI 對話教室</div>
             <div class="view__subtitle">選擇今天要練習的主題</div>
         </div>
+
+        <div class="ai-quick-start" onclick="window.JT.quickStart()">
+            <div class="ai-quick-start__icon">⚡</div>
+            <div class="ai-quick-start__body">
+                <div class="ai-quick-start__title">5 分鐘快練</div>
+                <div class="ai-quick-start__desc">隨機主題，直接開始</div>
+            </div>
+        </div>
+
         <div class="ai-topic-grid">
             ${TOPICS.map(t => `
             <div class="ai-topic-card" onclick="window.JT.selectAITopic('${t.id}')">
