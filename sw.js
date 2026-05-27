@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jp-tutor-v1';
+const CACHE_NAME = 'jp-tutor-v2';
 const ASSETS = [
     './',
     './index.html',
@@ -12,6 +12,7 @@ const ASSETS = [
     './css/dialogue.css',
     './css/progress.css',
     './css/jlpt.css',
+    './css/ai-chat.css',
     './css/responsive.css',
     './js/app.js',
     './js/store.js',
@@ -23,6 +24,7 @@ const ASSETS = [
     './js/progress.js',
     './js/review.js',
     './js/speech.js',
+    './js/ai-chat.js',
     './js/data-loader.js',
     './js/jlpt.js',
     './data/curriculum.js',
