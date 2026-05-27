@@ -86,6 +86,7 @@ let chatHistory = [];
 let isLoading = false;
 let isRecording = false;
 let currentTopic = null;
+let sessionSummary = null;
 let apiKey = '';
 
 function getApiKey() {
@@ -224,6 +225,7 @@ export function renderAIChat() {
                 <span class="ai-chat-header__title">${currentTopic.title}</span>
             </div>
             <div class="ai-chat-header__actions">
+                <button class="btn btn--ghost btn--sm" onclick="window.JT.endSession()">結束練習</button>
                 <button class="btn btn--ghost btn--sm" onclick="window.JT.resetAIChat()">重新開始</button>
             </div>
         </div>
@@ -253,9 +255,187 @@ export function renderAIChat() {
     `;
 }
 
+const SUMMARY_PROMPT = `今までの会話を振り返って、以下のJSON形式で学習レポートを作成してください。他のテキストは一切出力しないでください。JSONのみ出力してください。
+
+{
+  "expressions": [
+    {"jp": "学んだ表現", "reading": "よみがな", "zh": "中文意思"}
+  ],
+  "corrections": [
+    {"wrong": "生徒の間違い", "correct": "正しい表現", "explanation": "中文で簡潔に説明"}
+  ],
+  "feedback": "今日の練習について一言アドバイス（中国語繁體で）"
+}
+
+注意：
+- expressions: 今日の会話で教えた新しい表現（最大5個）
+- corrections: 生徒が間違えた箇所（最大5個、なければ空配列）
+- feedback: 1〜2文の励ましとアドバイス`;
+
+function renderSummary() {
+    if (!sessionSummary) return '';
+    const s = sessionSummary;
+    return `
+    <div class="view">
+        <div class="ai-summary">
+            <div class="ai-summary__header">
+                <div class="ai-summary__icon">📝</div>
+                <div class="ai-summary__title">今日の学習レポート</div>
+            </div>
+
+            ${s.expressions && s.expressions.length > 0 ? `
+            <div class="ai-summary__section">
+                <div class="ai-summary__section-title">✨ 學到的新表達</div>
+                <div class="ai-summary__list">
+                    ${s.expressions.map((e, i) => `
+                    <div class="ai-summary__item">
+                        <div class="ai-summary__item-main">
+                            <span class="ai-summary__jp">${e.jp}</span>
+                            <span class="ai-summary__reading">${e.reading || ''}</span>
+                        </div>
+                        <div class="ai-summary__zh">${e.zh}</div>
+                        <button class="btn btn--ghost btn--sm ai-summary__add" onclick="window.JT.addToSRS(${i}, 'expression')">+ 加入複習</button>
+                    </div>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+
+            ${s.corrections && s.corrections.length > 0 ? `
+            <div class="ai-summary__section">
+                <div class="ai-summary__section-title">🔧 錯誤修正</div>
+                <div class="ai-summary__list">
+                    ${s.corrections.map((c, i) => `
+                    <div class="ai-summary__item ai-summary__item--correction">
+                        <div class="ai-summary__wrong">✗ ${c.wrong}</div>
+                        <div class="ai-summary__correct">✓ ${c.correct}</div>
+                        <div class="ai-summary__explanation">${c.explanation}</div>
+                        <button class="btn btn--ghost btn--sm ai-summary__add" onclick="window.JT.addToSRS(${i}, 'correction')">+ 加入複習</button>
+                    </div>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+
+            ${s.feedback ? `
+            <div class="ai-summary__section">
+                <div class="ai-summary__section-title">💬 老師的話</div>
+                <div class="ai-summary__feedback">${s.feedback}</div>
+            </div>
+            ` : ''}
+
+            <div class="ai-summary__actions">
+                <button class="btn btn--primary" onclick="window.JT.backToTopics()">選擇新主題</button>
+                <button class="btn btn--ghost" onclick="window.JT.addAllToSRS()">全部加入複習</button>
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+export async function endSession() {
+    if (chatHistory.length < 2) {
+        backToTopics();
+        return;
+    }
+
+    isLoading = true;
+    refreshChat();
+
+    try {
+        const summaryMessages = [
+            ...chatHistory,
+            { role: 'user', content: SUMMARY_PROMPT }
+        ];
+
+        const key = getApiKey();
+        const body = {
+            model: GROQ_MODEL,
+            messages: [
+                { role: 'system', content: 'あなたは日本語教師です。指示通りにJSONのみを出力してください。' },
+                ...summaryMessages
+            ],
+            temperature: 0.3,
+            max_tokens: 800,
+        };
+
+        const res = await fetch(GROQ_BASE, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${key}`,
+            },
+            body: JSON.stringify(body),
+        });
+
+        if (!res.ok) throw new Error('API error');
+
+        const data = await res.json();
+        const raw = data.choices?.[0]?.message?.content || '';
+        const jsonMatch = raw.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+            sessionSummary = JSON.parse(jsonMatch[0]);
+        } else {
+            sessionSummary = { expressions: [], corrections: [], feedback: raw };
+        }
+    } catch (e) {
+        sessionSummary = { expressions: [], corrections: [], feedback: '⚠️ レポート生成に失敗しました。' };
+    }
+
+    isLoading = false;
+    const main = document.getElementById('main-content');
+    if (main) main.innerHTML = renderSummary();
+}
+
+export function addToSRS(index, type) {
+    if (!sessionSummary) return;
+    const item = type === 'expression'
+        ? sessionSummary.expressions[index]
+        : sessionSummary.corrections[index];
+    if (!item) return;
+
+    const cardId = `ai-${Date.now()}-${index}`;
+    const card = {
+        id: cardId,
+        word: type === 'expression' ? item.jp : item.correct,
+        reading: type === 'expression' ? (item.reading || '') : '',
+        meaning_zh: type === 'expression' ? item.zh : item.explanation,
+        example: type === 'expression' ? item.jp : item.correct,
+        example_zh: type === 'expression' ? item.zh : item.explanation,
+        tags: ['ai-learned'],
+    };
+
+    let customCards = JSON.parse(localStorage.getItem('jt_custom_cards') || '[]');
+    customCards.push(card);
+    localStorage.setItem('jt_custom_cards', JSON.stringify(customCards));
+
+    const btn = event?.target;
+    if (btn) {
+        btn.textContent = '✓ 已加入';
+        btn.disabled = true;
+        btn.classList.add('ai-summary__added');
+    }
+}
+
+export function addAllToSRS() {
+    if (!sessionSummary) return;
+    const expressions = sessionSummary.expressions || [];
+    const corrections = sessionSummary.corrections || [];
+
+    expressions.forEach((_, i) => addToSRS(i, 'expression'));
+    corrections.forEach((_, i) => addToSRS(i, 'correction'));
+
+    const btn = event?.target;
+    if (btn) {
+        btn.textContent = '✓ 全部已加入';
+        btn.disabled = true;
+    }
+}
+
 export function selectAITopic(topicId) {
     currentTopic = TOPICS.find(t => t.id === topicId);
     chatHistory = [];
+    sessionSummary = null;
     isLoading = false;
     const main = document.getElementById('main-content');
     if (main) main.innerHTML = renderAIChat();
@@ -265,6 +445,7 @@ export function selectAITopic(topicId) {
 export function backToTopics() {
     currentTopic = null;
     chatHistory = [];
+    sessionSummary = null;
     isLoading = false;
     const main = document.getElementById('main-content');
     if (main) main.innerHTML = renderAIChat();
