@@ -37,6 +37,15 @@ export function stopSpeech() {
 
 let recognition = null;
 let onResultCallback = null;
+let voiceLang = localStorage.getItem('jt_voice_lang') || 'ja-JP';
+
+export function getVoiceLang() { return voiceLang; }
+
+export function toggleVoiceLang() {
+    voiceLang = voiceLang === 'ja-JP' ? 'zh-TW' : 'ja-JP';
+    localStorage.setItem('jt_voice_lang', voiceLang);
+    return voiceLang;
+}
 
 export function startListening(callback) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -47,7 +56,7 @@ export function startListening(callback) {
 
     onResultCallback = callback;
     recognition = new SpeechRecognition();
-    recognition.lang = 'ja-JP';
+    recognition.lang = voiceLang;
     recognition.interimResults = false;
     recognition.maxAlternatives = 3;
     recognition.continuous = false;

@@ -188,6 +188,29 @@
     opacity: 0.5;
 }
 
+/* Language Toggle Button */
+.ai-lang-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--accent-light);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all var(--transition-fast);
+}
+
+.ai-lang-btn:hover {
+    border-color: var(--accent-dim);
+    background: var(--accent-glow);
+}
+
 /* Mic Button */
 .ai-mic-btn {
     width: 40px;
