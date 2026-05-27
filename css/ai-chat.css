@@ -85,6 +85,24 @@
     word-break: break-word;
 }
 
+.ai-translation {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+    margin-top: 2px;
+}
+
+.ai-wrong {
+    color: var(--coral);
+    text-decoration: line-through;
+}
+
+.ai-correct {
+    color: var(--matcha);
+    font-weight: 600;
+}
+
 .ai-bubble__speak {
     margin-top: var(--space-2);
     opacity: 0.6;
