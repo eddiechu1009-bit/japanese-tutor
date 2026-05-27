@@ -47,7 +47,7 @@ export function startListening(callback) {
 
     onResultCallback = callback;
     recognition = new SpeechRecognition();
-    recognition.lang = 'zh-TW';
+    recognition.lang = 'ja-JP';
     recognition.interimResults = false;
     recognition.maxAlternatives = 3;
     recognition.continuous = false;
