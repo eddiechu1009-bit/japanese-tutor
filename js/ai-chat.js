@@ -256,7 +256,9 @@ export function renderAIChat() {
 export function selectAITopic(topicId) {
     currentTopic = TOPICS.find(t => t.id === topicId);
     chatHistory = [];
-    refreshChat();
+    isLoading = false;
+    const main = document.getElementById('main-content');
+    if (main) main.innerHTML = renderAIChat();
     startConversation();
 }
 
@@ -264,7 +266,8 @@ export function backToTopics() {
     currentTopic = null;
     chatHistory = [];
     isLoading = false;
-    refreshChat();
+    const main = document.getElementById('main-content');
+    if (main) main.innerHTML = renderAIChat();
 }
 
 export async function sendAIMessage() {
