@@ -527,50 +527,51 @@ export function toggleVoiceInput() {
     if (isRecording) {
         stopListening();
         isRecording = false;
-        const main = document.getElementById('main-content');
-        if (main) main.innerHTML = renderAIChat();
+        updateMicUI();
         return;
     }
 
     isRecording = true;
-    const main = document.getElementById('main-content');
-    if (main) main.innerHTML = renderAIChat();
+    updateMicUI();
 
     startListening((result) => {
         isRecording = false;
         if (result.error) {
             const errMsg = `語音辨識失敗: ${result.error}`;
             chatHistory.push({ role: 'assistant', content: `⚠️ ${errMsg}\n\n可能原因：\n• 請確認已允許麥克風權限\n• 需使用 HTTPS 網頁\n• 請對著麥克風說話` });
-            const main = document.getElementById('main-content');
-            if (main) main.innerHTML = renderAIChat();
-            scrollToBottom();
+            refreshChat();
             return;
         }
         const text = result.results?.[0]?.text || '';
         if (text) {
             chatHistory.push({ role: 'user', content: text });
             isLoading = true;
-            const main = document.getElementById('main-content');
-            if (main) main.innerHTML = renderAIChat();
-            scrollToBottom();
+            refreshChat();
             callLLM(chatHistory).then(reply => {
                 chatHistory.push({ role: 'assistant', content: reply });
                 isLoading = false;
-                const main = document.getElementById('main-content');
-                if (main) main.innerHTML = renderAIChat();
-                scrollToBottom();
+                refreshChat();
             }).catch(e => {
                 chatHistory.push({ role: 'assistant', content: `⚠️ エラー: ${e.message}` });
                 isLoading = false;
-                const main = document.getElementById('main-content');
-                if (main) main.innerHTML = renderAIChat();
-                scrollToBottom();
+                refreshChat();
             });
         } else {
-            const main = document.getElementById('main-content');
-            if (main) main.innerHTML = renderAIChat();
+            chatHistory.push({ role: 'assistant', content: '⚠️ 沒有偵測到語音，請再試一次。' });
+            refreshChat();
         }
     });
+}
+
+function updateMicUI() {
+    const btn = document.querySelector('.ai-mic-btn');
+    const input = document.getElementById('ai-user-input');
+    if (btn) {
+        btn.classList.toggle('ai-mic-btn--active', isRecording);
+    }
+    if (input) {
+        input.placeholder = isRecording ? '🎤 聆聽中...' : '日文或中文都可以...';
+    }
 }
 
 async function startConversation() {
