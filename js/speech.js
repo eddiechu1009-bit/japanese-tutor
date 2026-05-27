@@ -47,11 +47,15 @@ export function startListening(callback) {
 
     onResultCallback = callback;
     recognition = new SpeechRecognition();
-    recognition.lang = 'ja-JP';
+    recognition.lang = 'zh-TW';
     recognition.interimResults = false;
     recognition.maxAlternatives = 3;
+    recognition.continuous = false;
+
+    let gotResult = false;
 
     recognition.onresult = (event) => {
+        gotResult = true;
         const results = [];
         for (let i = 0; i < event.results[0].length; i++) {
             results.push({
@@ -63,14 +67,22 @@ export function startListening(callback) {
     };
 
     recognition.onerror = (event) => {
+        gotResult = true;
         if (onResultCallback) onResultCallback({ error: event.error, results: [] });
     };
 
     recognition.onend = () => {
+        if (!gotResult && onResultCallback) {
+            onResultCallback({ error: 'no-speech', results: [] });
+        }
         recognition = null;
     };
 
-    recognition.start();
+    try {
+        recognition.start();
+    } catch (e) {
+        callback({ error: 'start-failed', results: [] });
+    }
 }
 
 export function stopListening() {
