@@ -531,10 +531,13 @@ export function switchVoiceLang() {
     refreshChat();
 }
 
+let voiceTimeout = null;
+
 export function toggleVoiceInput() {
     if (isRecording) {
         stopListening();
         isRecording = false;
+        if (voiceTimeout) { clearTimeout(voiceTimeout); voiceTimeout = null; }
         updateMicUI();
         return;
     }
@@ -542,33 +545,53 @@ export function toggleVoiceInput() {
     isRecording = true;
     updateMicUI();
 
+    voiceTimeout = setTimeout(() => {
+        if (isRecording) {
+            stopListening();
+            isRecording = false;
+            chatHistory.push({ role: 'assistant', content: '⚠️ 語音辨識逾時（10秒），請再試一次。\n\n提示：按下麥克風後請立刻說話。' });
+            forceRender();
+        }
+    }, 10000);
+
     startListening((result) => {
+        if (voiceTimeout) { clearTimeout(voiceTimeout); voiceTimeout = null; }
+        if (!isRecording) return;
         isRecording = false;
+        updateMicUI();
         if (result.error) {
             const errMsg = `語音辨識失敗: ${result.error}`;
             chatHistory.push({ role: 'assistant', content: `⚠️ ${errMsg}\n\n可能原因：\n• 請確認已允許麥克風權限\n• 需使用 HTTPS 網頁\n• 請對著麥克風說話` });
-            refreshChat();
+            forceRender();
             return;
         }
         const text = result.results?.[0]?.text || '';
         if (text) {
             chatHistory.push({ role: 'user', content: text });
             isLoading = true;
-            refreshChat();
+            forceRender();
             callLLM(chatHistory).then(reply => {
                 chatHistory.push({ role: 'assistant', content: reply });
                 isLoading = false;
-                refreshChat();
+                forceRender();
             }).catch(e => {
                 chatHistory.push({ role: 'assistant', content: `⚠️ エラー: ${e.message}` });
                 isLoading = false;
-                refreshChat();
+                forceRender();
             });
         } else {
             chatHistory.push({ role: 'assistant', content: '⚠️ 沒有偵測到語音，請再試一次。' });
-            refreshChat();
+            forceRender();
         }
     });
+}
+
+function forceRender() {
+    const main = document.getElementById('main-content');
+    if (main) {
+        main.innerHTML = renderAIChat();
+        scrollToBottom();
+    }
 }
 
 function updateMicUI() {
