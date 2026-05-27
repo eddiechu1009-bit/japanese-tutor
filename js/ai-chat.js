@@ -527,25 +527,46 @@ export function toggleVoiceInput() {
     if (isRecording) {
         stopListening();
         isRecording = false;
-        refreshChat();
+        const main = document.getElementById('main-content');
+        if (main) main.innerHTML = renderAIChat();
         return;
     }
 
     isRecording = true;
-    refreshChat();
+    const main = document.getElementById('main-content');
+    if (main) main.innerHTML = renderAIChat();
 
     startListening((result) => {
         isRecording = false;
         if (result.error) {
-            refreshChat();
+            const main = document.getElementById('main-content');
+            if (main) main.innerHTML = renderAIChat();
             return;
         }
         const text = result.results?.[0]?.text || '';
         if (text) {
-            const input = document.getElementById('ai-user-input');
-            if (input) input.value = text;
+            chatHistory.push({ role: 'user', content: text });
+            isLoading = true;
+            const main = document.getElementById('main-content');
+            if (main) main.innerHTML = renderAIChat();
+            scrollToBottom();
+            callLLM(chatHistory).then(reply => {
+                chatHistory.push({ role: 'assistant', content: reply });
+                isLoading = false;
+                const main = document.getElementById('main-content');
+                if (main) main.innerHTML = renderAIChat();
+                scrollToBottom();
+            }).catch(e => {
+                chatHistory.push({ role: 'assistant', content: `⚠️ エラー: ${e.message}` });
+                isLoading = false;
+                const main = document.getElementById('main-content');
+                if (main) main.innerHTML = renderAIChat();
+                scrollToBottom();
+            });
+        } else {
+            const main = document.getElementById('main-content');
+            if (main) main.innerHTML = renderAIChat();
         }
-        refreshChat();
     });
 }
 
