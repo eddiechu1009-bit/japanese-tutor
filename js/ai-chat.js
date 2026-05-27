@@ -5,22 +5,87 @@ const GROQ_MODEL = 'llama-3.3-70b-versatile';
 const GROQ_BASE = 'https://api.groq.com/openai/v1/chat/completions';
 const DEFAULT_KEY = '';
 
-const SYSTEM_PROMPT = `あなたは優しい日本語の先生です。生徒は台湾人のビジネスパーソンで、日本語初中級レベル（N4〜N3）です。
+const TOPICS = [
+    {
+        id: 'free',
+        icon: '💬',
+        title: '自由對話',
+        title_jp: 'フリートーク',
+        desc: '跟老師聊任何主題',
+        prompt: '生徒が自由に話したいトピックを選びます。何について話したいか聞いてください。',
+    },
+    {
+        id: 'intro',
+        icon: '🤝',
+        title: '自我介紹',
+        title_jp: '自己紹介',
+        desc: '練習商務場合的自我介紹',
+        prompt: '今日のテーマは「自己紹介」です。ビジネスの場面で使える自己紹介を練習しましょう。まず、簡単な場面を設定して（例：新しい取引先との初対面）、生徒に自己紹介をさせてください。',
+    },
+    {
+        id: 'email',
+        icon: '📧',
+        title: '商務郵件',
+        title_jp: 'ビジネスメール',
+        desc: '學習郵件的敬語與格式',
+        prompt: '今日のテーマは「ビジネスメール」です。メールの書き方（件名、挨拶、本文、結び）を練習しましょう。具体的な場面を設定して（例：会議の日程調整、お礼メール）、生徒にメールを書かせてください。',
+    },
+    {
+        id: 'phone',
+        icon: '📞',
+        title: '電話應對',
+        title_jp: '電話対応',
+        desc: '接電話、轉接、留言',
+        prompt: '今日のテーマは「電話対応」です。電話の受け方、取り次ぎ、伝言の預かり方を練習しましょう。あなたが電話をかける側の役を演じて、生徒に対応させてください。',
+    },
+    {
+        id: 'meeting',
+        icon: '🏢',
+        title: '會議發言',
+        title_jp: '会議',
+        desc: '提案、贊成、反對、總結',
+        prompt: '今日のテーマは「会議」です。会議での発言（提案、賛成、反対、質問、まとめ）を練習しましょう。会議の場面を設定して、生徒に発言させてください。',
+    },
+    {
+        id: 'keigo',
+        icon: '🎌',
+        title: '敬語特訓',
+        title_jp: '敬語',
+        desc: '尊敬語、謙讓語、丁寧語',
+        prompt: '今日のテーマは「敬語」です。尊敬語、謙譲語、丁寧語の使い分けを練習しましょう。普通の文を提示して、生徒に正しい敬語に変換させてください。間違えたら丁寧に説明してください。',
+    },
+    {
+        id: 'negotiate',
+        icon: '💼',
+        title: '商業談判',
+        title_jp: '交渉',
+        desc: '價格協商、條件討論',
+        prompt: '今日のテーマは「交渉・ネゴシエーション」です。価格交渉、条件の提示、譲歩の表現を練習しましょう。あなたが取引先の役を演じて、生徒と交渉してください。',
+    },
+    {
+        id: 'travel',
+        icon: '✈️',
+        title: '日本出差',
+        title_jp: '出張',
+        desc: '飯店、交通、餐廳用語',
+        prompt: '今日のテーマは「日本出張」です。ホテルのチェックイン、タクシー、レストランでの注文など、出張中に使う日本語を練習しましょう。場面を設定してロールプレイしてください。',
+    },
+];
+
+const BASE_SYSTEM = `あなたは優しい日本語の先生です。生徒は台湾人のビジネスパーソンで、日本語初中級レベル（N4〜N3）です。
 
 ルール：
 1. 日本語で話しかけてください。難しい漢字にはふりがなを（）で付けてください。
 2. 生徒が間違えたら、まず正しい文を示し、なぜ間違いかを中国語（繁體中文）で簡潔に説明してください。
 3. 生徒が中国語で書いても構いません。その場合は日本語でどう言うかを教えてください。
 4. 会話は自然に続けてください。一度に長すぎる説明はしないでください（3文以内）。
-5. ビジネス日本語（敬語、メール、会議、電話対応）を中心に教えてください。
-6. 時々、生徒に質問を投げかけて練習させてください。
-7. 生徒のレベルに合わせて、徐々に難易度を上げてください。
-
-最初のメッセージ: 簡単に自己紹介をして、生徒に今日何を練習したいか聞いてください。`;
+5. 時々、生徒に質問を投げかけて練習させてください。
+6. 生徒のレベルに合わせて、徐々に難易度を上げてください。`;
 
 let chatHistory = [];
 let isLoading = false;
 let isRecording = false;
+let currentTopic = null;
 let apiKey = '';
 
 function getApiKey() {
@@ -40,6 +105,11 @@ function saveApiKey(key) {
     localStorage.setItem('jt_groq_key', key);
 }
 
+function getSystemPrompt() {
+    const topicPrompt = currentTopic ? currentTopic.prompt : '';
+    return `${BASE_SYSTEM}\n\n今日のテーマ: ${topicPrompt}\n\n最初のメッセージ: テーマに合わせて簡単に挨拶し、練習を始めてください。`;
+}
+
 async function callLLM(messages) {
     const key = getApiKey();
     if (!key) throw new Error('NO_KEY');
@@ -47,7 +117,7 @@ async function callLLM(messages) {
     const body = {
         model: GROQ_MODEL,
         messages: [
-            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'system', content: getSystemPrompt() },
             ...messages
         ],
         temperature: 0.8,
@@ -97,6 +167,29 @@ function renderMessages() {
     }).join('');
 }
 
+function renderTopicSelect() {
+    return `
+    <div class="view">
+        <div class="view__header">
+            <div class="view__title">AI 對話教室</div>
+            <div class="view__subtitle">選擇今天要練習的主題</div>
+        </div>
+        <div class="ai-topic-grid">
+            ${TOPICS.map(t => `
+            <div class="ai-topic-card" onclick="window.JT.selectAITopic('${t.id}')">
+                <div class="ai-topic-card__icon">${t.icon}</div>
+                <div class="ai-topic-card__body">
+                    <div class="ai-topic-card__title">${t.title}</div>
+                    <div class="ai-topic-card__jp">${t.title_jp}</div>
+                    <div class="ai-topic-card__desc">${t.desc}</div>
+                </div>
+            </div>
+            `).join('')}
+        </div>
+    </div>
+    `;
+}
+
 export function renderAIChat() {
     const key = getApiKey();
 
@@ -118,16 +211,20 @@ export function renderAIChat() {
         `;
     }
 
+    if (!currentTopic) {
+        return renderTopicSelect();
+    }
+
     return `
     <div class="view ai-chat-view">
         <div class="ai-chat-header">
             <div class="ai-chat-header__info">
-                <span class="ai-chat-header__icon">🤖</span>
-                <span class="ai-chat-header__title">AI 日語教師</span>
+                <button class="ai-chat-header__back" onclick="window.JT.backToTopics()">←</button>
+                <span class="ai-chat-header__icon">${currentTopic.icon}</span>
+                <span class="ai-chat-header__title">${currentTopic.title}</span>
             </div>
             <div class="ai-chat-header__actions">
                 <button class="btn btn--ghost btn--sm" onclick="window.JT.resetAIChat()">重新開始</button>
-                <button class="btn btn--ghost btn--sm" onclick="window.JT.changeGeminiKey()">更換 Key</button>
             </div>
         </div>
 
@@ -137,14 +234,6 @@ export function renderAIChat() {
         </div>
 
         <div class="ai-chat-input-area">
-            <div class="ai-chat-suggestions" id="ai-suggestions">
-                ${chatHistory.length === 0 ? `
-                <button class="ai-suggestion" onclick="window.JT.sendAISuggestion('自己紹介の練習をしたいです')">自我介紹練習</button>
-                <button class="ai-suggestion" onclick="window.JT.sendAISuggestion('ビジネスメールの書き方を教えてください')">商務郵件寫法</button>
-                <button class="ai-suggestion" onclick="window.JT.sendAISuggestion('電話対応の練習をしたいです')">電話應對練習</button>
-                <button class="ai-suggestion" onclick="window.JT.sendAISuggestion('会議で使う表現を教えてください')">會議用語</button>
-                ` : ''}
-            </div>
             <form class="ai-chat-form" onsubmit="event.preventDefault(); window.JT.sendAIMessage()">
                 ${isRecognitionSupported() ? `
                 <button type="button" class="ai-mic-btn ${isRecording ? 'ai-mic-btn--active' : ''}"
@@ -162,6 +251,20 @@ export function renderAIChat() {
         </div>
     </div>
     `;
+}
+
+export function selectAITopic(topicId) {
+    currentTopic = TOPICS.find(t => t.id === topicId);
+    chatHistory = [];
+    refreshChat();
+    startConversation();
+}
+
+export function backToTopics() {
+    currentTopic = null;
+    chatHistory = [];
+    isLoading = false;
+    refreshChat();
 }
 
 export async function sendAIMessage() {
@@ -210,6 +313,7 @@ export function resetAIChat() {
     chatHistory = [];
     isLoading = false;
     refreshChat();
+    startConversation();
 }
 
 export function saveGeminiKey() {
@@ -218,13 +322,13 @@ export function saveGeminiKey() {
     if (!key) return;
     saveApiKey(key);
     refreshChat();
-    startConversation();
 }
 
 export function changeGeminiKey() {
     apiKey = '';
     localStorage.removeItem('jt_groq_key');
     chatHistory = [];
+    currentTopic = null;
     refreshChat();
 }
 
@@ -260,12 +364,12 @@ export function toggleVoiceInput() {
 }
 
 async function startConversation() {
-    if (chatHistory.length > 0) return;
+    if (chatHistory.length > 0 || !currentTopic) return;
     isLoading = true;
     refreshChat();
 
     try {
-        chatHistory.push({ role: 'user', content: 'こんにちは、先生。よろしくお願いします。' });
+        chatHistory.push({ role: 'user', content: 'こんにちは、先生。よろしくお願いします。今日のテーマを始めましょう。' });
         const reply = await callLLM(chatHistory);
         chatHistory.push({ role: 'assistant', content: reply });
     } catch (e) {
@@ -292,7 +396,7 @@ function scrollToBottom() {
 }
 
 export function initAIChat() {
-    if (getApiKey() && chatHistory.length === 0) {
-        startConversation();
+    if (getApiKey() && !currentTopic) {
+        refreshChat();
     }
 }

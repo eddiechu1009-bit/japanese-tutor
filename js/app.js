@@ -4,7 +4,7 @@ import { renderDialogue, openDialogue, closeDialogue, revealLine, completeDialog
 import { renderProgress } from './progress.js';
 import { renderReview, startReview, answerQuiz, nextQuestion, resetQuiz } from './review.js';
 import { renderJLPT, selectJLPTLevel, backToJLPTOverview, backToJLPTLevel, startJLPTExam, answerJLPT, nextJLPTQuestion } from './jlpt.js';
-import { renderAIChat, sendAIMessage, sendAISuggestion, resetAIChat, saveGeminiKey, changeGeminiKey, speakAI, initAIChat, toggleVoiceInput } from './ai-chat.js';
+import { renderAIChat, sendAIMessage, sendAISuggestion, resetAIChat, saveGeminiKey, changeGeminiKey, speakAI, initAIChat, toggleVoiceInput, selectAITopic, backToTopics } from './ai-chat.js';
 import { speak, speakSlow, startListening, stopListening } from './speech.js';
 
 const routes = {
@@ -75,6 +75,8 @@ window.JT = {
     changeGeminiKey,
     speakAI,
     toggleVoiceInput,
+    selectAITopic,
+    backToTopics,
 };
 
 window.addEventListener('keydown', (e) => {
