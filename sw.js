@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jp-tutor-v4';
+const CACHE_NAME = 'jp-tutor-v5';
 const ASSETS = [
     './',
     './index.html',
@@ -66,6 +66,6 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
     event.respondWith(
-        caches.match(event.request).then(cached => cached || fetch(event.request))
+        fetch(event.request).catch(() => caches.match(event.request))
     );
 });
