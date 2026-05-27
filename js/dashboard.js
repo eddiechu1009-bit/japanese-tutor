@@ -1,7 +1,58 @@
 import { Store } from './store.js';
 import { getDueCards } from './srs.js';
 import { getToday, getGreeting, getDailyProverb, getDayOfWeek, addDays } from './utils.js';
-import { getAllCardIds } from './data-loader.js';
+import { getAllCardIds, getAllCards } from './data-loader.js';
+
+const AI_TOPIC_NAMES = { free: '自由', intro: '介紹', email: '郵件', phone: '電話', meeting: '會議', keigo: '敬語', negotiate: '談判', travel: '出差' };
+
+function renderAIStatsCard(progress) {
+    const sessions = progress.aiSessions || [];
+    if (sessions.length === 0) {
+        return `
+            <div class="card ai-stats-card">
+                <div class="ai-stats-card__title">AI 對話教室</div>
+                <div class="ai-stats-card__stats">
+                    <div class="today-stat">
+                        <span class="today-stat__value">0</span>
+                        <span class="today-stat__label">練習次數</span>
+                    </div>
+                    <div class="today-stat">
+                        <span class="today-stat__value">0</span>
+                        <span class="today-stat__label">糾正次數</span>
+                    </div>
+                    <div class="today-stat">
+                        <span class="today-stat__value">—</span>
+                        <span class="today-stat__label">最常練習</span>
+                    </div>
+                </div>
+                <a href="#ai-chat" class="btn btn--ghost">開始練習</a>
+            </div>`;
+    }
+    const totalSessions = sessions.length;
+    const totalCorrections = sessions.reduce((sum, s) => sum + (s.corrections || 0), 0);
+    const topicCount = {};
+    sessions.forEach(s => { topicCount[s.topic] = (topicCount[s.topic] || 0) + 1; });
+    const favoriteTopic = Object.entries(topicCount).sort((a, b) => b[1] - a[1])[0][0];
+    return `
+        <div class="card ai-stats-card">
+            <div class="ai-stats-card__title">AI 對話教室</div>
+            <div class="ai-stats-card__stats">
+                <div class="today-stat">
+                    <span class="today-stat__value">${totalSessions}</span>
+                    <span class="today-stat__label">練習次數</span>
+                </div>
+                <div class="today-stat">
+                    <span class="today-stat__value">${totalCorrections}</span>
+                    <span class="today-stat__label">糾正次數</span>
+                </div>
+                <div class="today-stat">
+                    <span class="today-stat__value">${AI_TOPIC_NAMES[favoriteTopic] || favoriteTopic}</span>
+                    <span class="today-stat__label">最常練習</span>
+                </div>
+            </div>
+            <a href="#ai-chat" class="btn btn--ghost">開始練習</a>
+        </div>`;
+}
 
 export function renderDashboard() {
     const user = Store.getUser();
@@ -10,7 +61,8 @@ export function renderDashboard() {
     const today = getToday();
 
     const allIds = getAllCardIds();
-    const { due, newCards } = getDueCards(allIds);
+    const allCards = getAllCards();
+    const { due, newCards } = getDueCards(allIds, allCards);
     const todayNewLimit = settings.newCardsPerDay;
     const todayReviewCount = due.length;
     const todayNewCount = Math.min(newCards.length, todayNewLimit);
@@ -108,6 +160,8 @@ export function renderDashboard() {
                     </div>
                 </a>
             </div>
+
+            ${renderAIStatsCard(progress)}
 
             <div class="proverb-card">
                 <div class="proverb-card__jp jp-serif">${proverb.jp}</div>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jp-tutor-v3';
+const CACHE_NAME = 'jp-tutor-v4';
 const ASSETS = [
     './',
     './index.html',
@@ -34,6 +34,13 @@ const ASSETS = [
     './data/vocabulary/week03.js',
     './data/vocabulary/week04.js',
     './data/vocabulary/week05.js',
+    './data/vocabulary/week06.js',
+    './data/vocabulary/week07.js',
+    './data/vocabulary/week08.js',
+    './data/vocabulary/week09.js',
+    './data/vocabulary/week10.js',
+    './data/vocabulary/week11.js',
+    './data/vocabulary/week12.js',
     './data/grammar/keigo-basics.js',
     './data/dialogues/scenarios.js',
     './data/dialogues/advanced-scenarios.js',

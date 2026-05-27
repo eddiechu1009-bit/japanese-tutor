@@ -44,7 +44,7 @@ export function reviewCard(cardId, quality) {
     return card;
 }
 
-export function getDueCards(allCardIds) {
+export function getDueCards(allCardIds, allCards) {
     const today = getToday();
     const due = [];
     const newCards = [];
@@ -57,6 +57,38 @@ export function getDueCards(allCardIds) {
             due.push(id);
         }
     }
+
+    // Interleave newCards by JLPT level (N5 -> N4 -> N3 -> repeat)
+    if (allCards && newCards.length > 0) {
+        const levelOrder = ['N5', 'N4', 'N3'];
+        const cardMap = new Map(allCards.map(c => [c.id, c]));
+        const buckets = { N5: [], N4: [], N3: [] };
+
+        for (const id of newCards) {
+            const cardData = cardMap.get(id);
+            const level = (cardData && cardData.level) || 'N4';
+            if (buckets[level]) {
+                buckets[level].push(id);
+            } else {
+                buckets['N4'].push(id);
+            }
+        }
+
+        const interleaved = [];
+        let placed = true;
+        while (placed) {
+            placed = false;
+            for (const lvl of levelOrder) {
+                if (buckets[lvl].length > 0) {
+                    interleaved.push(buckets[lvl].shift());
+                    placed = true;
+                }
+            }
+        }
+
+        return { due, newCards: interleaved };
+    }
+
     return { due, newCards };
 }
 

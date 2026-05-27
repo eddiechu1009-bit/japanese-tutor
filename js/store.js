@@ -105,6 +105,14 @@ export const Store = {
         }
     },
 
+    logAISession(date, topic, corrections) {
+        const progress = this.getProgress();
+        if (!progress.aiSessions) progress.aiSessions = [];
+        progress.aiSessions.push({ date, topic, corrections, timestamp: Date.now() });
+        if (progress.aiSessions.length > 50) progress.aiSessions = progress.aiSessions.slice(-50);
+        save(KEYS.progress, progress);
+    },
+
     saveWeeklyTest(week, score) {
         const progress = this.getProgress();
         progress.weeklyTests[week] = score;

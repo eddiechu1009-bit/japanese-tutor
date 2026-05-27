@@ -12,7 +12,8 @@ let sessionStats = { reviewed: 0, correct: 0, newLearned: 0 };
 function buildSession() {
     const settings = Store.getSettings();
     const allIds = getAllCardIds();
-    const { due, newCards } = getDueCards(allIds);
+    const allCards = getAllCards();
+    const { due, newCards } = getDueCards(allIds, allCards);
 
     const reviewCards = shuffle(due).slice(0, settings.reviewLimit);
     const newToStudy = newCards.slice(0, settings.newCardsPerDay);

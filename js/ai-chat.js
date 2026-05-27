@@ -1,4 +1,5 @@
 import { Store } from './store.js';
+import { getToday } from './utils.js';
 import { speak, startListening, stopListening, isRecognitionSupported } from './speech.js';
 
 const GROQ_MODEL = 'llama-3.3-70b-versatile';
@@ -383,6 +384,7 @@ export async function endSession() {
     }
 
     isLoading = false;
+    Store.logAISession(getToday(), currentTopic.id, sessionSummary?.corrections?.length || 0);
     const main = document.getElementById('main-content');
     if (main) main.innerHTML = renderSummary();
 }
