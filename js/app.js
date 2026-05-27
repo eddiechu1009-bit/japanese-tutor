@@ -4,6 +4,7 @@ import { renderDialogue, openDialogue, closeDialogue, revealLine, completeDialog
 import { renderProgress } from './progress.js';
 import { renderReview, startReview, answerQuiz, nextQuestion, resetQuiz } from './review.js';
 import { renderJLPT, selectJLPTLevel, backToJLPTOverview, backToJLPTLevel, startJLPTExam, answerJLPT, nextJLPTQuestion } from './jlpt.js';
+import { renderAIChat, sendAIMessage, sendAISuggestion, resetAIChat, saveGeminiKey, changeGeminiKey, speakAI, initAIChat, toggleVoiceInput } from './ai-chat.js';
 import { speak, speakSlow, startListening, stopListening } from './speech.js';
 
 const routes = {
@@ -11,6 +12,7 @@ const routes = {
     '#dashboard': renderDashboard,
     '#flashcard': renderFlashcard,
     '#dialogue': renderDialogue,
+    '#ai-chat': renderAIChat,
     '#progress': renderProgress,
     '#review': renderReview,
     '#jlpt': renderJLPT,
@@ -24,6 +26,7 @@ function navigate() {
         main.innerHTML = renderer();
     }
     updateActiveNav(hash || '#dashboard');
+    if (hash === '#ai-chat') initAIChat();
 }
 
 function updateActiveNav(hash) {
@@ -65,6 +68,13 @@ window.JT = {
     startJLPTExam,
     answerJLPT,
     nextJLPTQuestion,
+    sendAIMessage,
+    sendAISuggestion,
+    resetAIChat,
+    saveGeminiKey,
+    changeGeminiKey,
+    speakAI,
+    toggleVoiceInput,
 };
 
 window.addEventListener('keydown', (e) => {

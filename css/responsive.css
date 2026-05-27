@@ -105,6 +105,16 @@
 
     .heatmap__grid {
         grid-template-columns: repeat(12, 1fr);
+        overflow-x: auto;
+    }
+
+    .weekly-chart__bars {
+        overflow-x: auto;
+        min-width: 0;
+    }
+
+    .weekly-chart__bar {
+        min-width: 20px;
     }
 }
 
@@ -113,6 +123,26 @@
     .main {
         padding: var(--space-3);
         padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+        overflow-x: hidden;
+    }
+
+    .heatmap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .heatmap__grid {
+        min-width: 280px;
+    }
+
+    .weekly-chart {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .mastery-chart {
+        flex-direction: column;
+        gap: var(--space-4);
     }
 
     .today-card {
