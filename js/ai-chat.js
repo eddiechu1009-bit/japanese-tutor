@@ -539,8 +539,11 @@ export function toggleVoiceInput() {
     startListening((result) => {
         isRecording = false;
         if (result.error) {
+            const errMsg = `語音辨識失敗: ${result.error}`;
+            chatHistory.push({ role: 'assistant', content: `⚠️ ${errMsg}\n\n可能原因：\n• 請確認已允許麥克風權限\n• 需使用 HTTPS 網頁\n• 請對著麥克風說話` });
             const main = document.getElementById('main-content');
             if (main) main.innerHTML = renderAIChat();
+            scrollToBottom();
             return;
         }
         const text = result.results?.[0]?.text || '';
