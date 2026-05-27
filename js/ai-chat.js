@@ -25,6 +25,12 @@ let apiKey = '';
 
 function getApiKey() {
     if (apiKey) return apiKey;
+    const params = new URLSearchParams(window.location.search);
+    const urlKey = params.get('key');
+    if (urlKey) {
+        saveApiKey(urlKey);
+        return apiKey;
+    }
     apiKey = localStorage.getItem('jt_groq_key') || DEFAULT_KEY;
     return apiKey;
 }
